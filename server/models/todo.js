@@ -3,19 +3,19 @@ const mongoose = require('mongoose');
 var Todo = mongoose.model('Todo', {
   text: {
     type: String,
-    require: true,
+    required: true,
     trim: true,
     minlength: 1
   },
   completed: {
     type: Boolean,
     default: false,
-    require: true
+    required: true
   },
   completedAt: {
     type: Number,
-    default: null,
-    require: true
+    default: null
+
   }
 });
 
