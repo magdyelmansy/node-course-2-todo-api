@@ -1,12 +1,15 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {Todo} = require('./../models/todo');
 const {app} = require('./../server');
 
 var todos = [{
+  _id: new ObjectID(),
   text: 'test text one'
 }, {
+  _id: new ObjectID(),
   text: 'test text two'
 }];
 beforeEach((done) => {
@@ -14,6 +17,7 @@ beforeEach((done) => {
     return Todo.insertMany(todos)
   }).then(() => done());
 });
+console.log(todos[0]._id.toHexString());
 
 describe('POST /todo', () => {
   it ('should add a new todo' , (done) => {
@@ -54,7 +58,9 @@ describe('POST /todo', () => {
         })
       })
   });
+});
 
+describe('GET /todo', () => {
   it('should get all todos', (done) => {
     request(app)
       .get('/todos')
@@ -64,4 +70,31 @@ describe('POST /todo', () => {
       })
       .end(done);
   })
+});
+
+describe('GET/todos/:id', () => {
+  it('Should Get One Todo', (done) => {
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).toBe(todos[0].text);
+      })
+      .end(done);
+  });
+
+  it('Should Get Back 404', (done) => {
+    var id = new ObjectID().toHexString();
+    request(app)
+      .get(`/todos/${id}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('Should Get Back 404 For Invalide ID', (done) => {
+    request(app)
+      .get('/todos/123')
+      .expect(404)
+      .end(done);
+  });
 });
