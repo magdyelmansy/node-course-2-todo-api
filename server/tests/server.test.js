@@ -140,13 +140,10 @@ describe('DELETE /todos/:id', () => {
 describe('PATCH /todos/:id',() => {
   it('should apdate the todo', (done) => {
     var id = todos[0]._id.toHexString();
-    var text = 'Some Thing Else';
+    var text = 'text Is changed';
     request(app)
       .patch(`/todos/${id}`)
-      .send({
-        completed: true,
-        text
-      })
+      .send({completed: true, text})
       .expect(200)
       .expect((res) => {
         expect(res.body.todo.text).toBe(text);
